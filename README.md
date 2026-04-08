@@ -1,4 +1,4 @@
-# SDI Insurance Agent (Scraper)
+# SDI AI Insurance Agent (Scraper)
 
 ## Project Overview
 
