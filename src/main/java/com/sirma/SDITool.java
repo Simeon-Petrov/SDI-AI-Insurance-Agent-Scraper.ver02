@@ -111,23 +111,35 @@ public class SDITool {
 
     private boolean extractViaJS(JavascriptExecutor js) {
         try {
-            String script = "var results = []; var rows = document.querySelectorAll('div, tr, section'); " +
-                            "for(var row of rows){ var text = row.innerText || ''; if(text.includes('лв') && text.length < 500 && text.split('\\n').length > 1){ results.push(text); } } return results;";
+            String script =
+                    "var results = [];" +
+                    "var rows = document.querySelectorAll('.oi-compare-row');" +
+                    "for(var row of rows){" +
+                    "  var nameEl = row.querySelector('.oi-compare-company span');" +
+                    "  var name = nameEl ? nameEl.innerText.trim() : '';" +
+                    "  var text = row.innerText || '';" +
+                    "  if(name && text.includes('лв')){" +
+                    "    results.push(name + '||' + text.replace(/\\n/g, ' '));" +
+                    "  }" +
+                    "}" +
+                    "return results;";
 
             List<String> rawData = (List<String>) js.executeScript(script);
             if (rawData == null || rawData.isEmpty()) return false;
 
-            // --- FILE NAMING WITH DATE dd-MM-yyyy ---
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-            String historyFile = "GO_Results_" + timestamp + ".csv";
-            String currentFile = "GO_Results.csv";
-
-            // Save History File
-            saveFile(historyFile, rawData);
-            // Save/Overwrite Current File for the Parser
-            saveFile(currentFile, rawData);
-
-            return true;
+            try (PrintWriter writer = new PrintWriter(new FileWriter("GO_Results.csv"))) {
+                writer.write('\ufeff');
+                writer.println("Offer Data");
+                int savedCount = 0;
+                for (String line : rawData) {
+                    String clean = line.replace(";", ",").replaceAll("\\s{2,}", " ").trim();
+                    if (clean.contains("лв") || clean.contains("€")) {
+                        writer.println(clean);
+                        savedCount++;
+                    }
+                }
+                return savedCount > 0;
+            }
         } catch (Exception e) {
             return false;
         }

@@ -35,7 +35,9 @@ public class ResultParser {
         StringBuilder sb = new StringBuilder();
 
         // Regex patterns for parsing data
-        Pattern singleEurPattern = Pattern.compile("^([А-Яа-я\\s\\w]+?)\\s+.*?/\\s*(\\d+,\\d{2})\\s*€");
+        Pattern singleEurPattern = Pattern.compile(
+                "^([^|]+)\\|\\|.*?/\\s*(\\d+,\\d{2})\\s*€");
+
         Pattern installmentsPattern = Pattern.compile("(\\d+,\\d{2})\\s*€\\s*\\+\\s*(\\d+,\\d{2})\\s*€\\s*\\+\\s*(\\d+,\\d{2})\\s*€\\s*\\+\\s*(\\d+,\\d{2})\\s*€\\s*=\\s*(\\d+,\\d{2})\\s*€");
 
         try (BufferedReader br = new BufferedReader(
@@ -83,7 +85,7 @@ public class ResultParser {
                 sb.append("No valid data found.\n");
             } else {
                 for (InsuranceOffer offer : offers) {
-                    sb.append(String.format("%-18s | %10.2f €  | %-40s\n",
+                    sb.append(String.format("%-18s | %10.2f    | %-40s\n",
                             offer.company, offer.singlePaymentEur, offer.fourInstallmentsFormula));
                 }
             }
