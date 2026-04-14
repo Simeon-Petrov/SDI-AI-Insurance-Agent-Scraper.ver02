@@ -25,10 +25,16 @@ public class SDITool {
         try {
             if (driver == null) {
                 ChromeOptions options = new ChromeOptions();
+                //// Specify the path to Brave
                 options.setBinary("C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe");
-                WebDriverManager.chromedriver().setup();
+                //We add a maximize argument to avoid the Runtime.evaluate error
+                options.addArguments("--start-maximized");
+                options.addArguments("--remote-allow-origins=*");
+                //We are fixing the driver version so that it does not download a newer one (147) that does not support your Brave (146)
+                WebDriverManager.chromedriver().driverVersion("146.0.7680.165").setup();
+
                 driver = new ChromeDriver(options);
-                driver.manage().window().maximize();
+
             }
 
             driver.get("https://www.sdi.bg/onlineinsurance/showQuestionnaire.php");

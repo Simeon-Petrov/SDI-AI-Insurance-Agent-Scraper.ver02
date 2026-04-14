@@ -85,7 +85,7 @@ public class ResultParser {
                 sb.append("No valid data found.\n");
             } else {
                 for (InsuranceOffer offer : offers) {
-                    sb.append(String.format("%-18s | %10.2f    | %-40s\n",
+                    sb.append(String.format("%-18s | %10.2f      | %-40s\n",
                             offer.company, offer.singlePaymentEur, offer.fourInstallmentsFormula));
                 }
             }
